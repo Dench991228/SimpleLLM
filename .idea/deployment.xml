@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="hanzhi@162.105.146.106:22 agent (14)" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="hanzhi@162.105.146.106:22 agent (14)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/hanzhi/Projects/SimpleLLM" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

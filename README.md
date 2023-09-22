@@ -1,2 +1,7 @@
 # SimpleLLM
-一个简单的项目，用于展示如何使用LoRA和QLoRA技术对模型进行精调以及推理
+A simple Project which aims finetuning LLM with LoRA and QLoRA. And also about serving LLM with vLLM. 
+
+## TODO
+- [ ] Finetuning LLM on single GPU with LoRA, using bfloat 16
+- [ ] Finetuning LLM on multiple GPU with LoRA, using bfloat 16
+- [ ] Finetuning quantized LLM
