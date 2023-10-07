@@ -14,7 +14,7 @@ class train_config:
     gradient_accumulation_steps: int=1
     num_epochs: int=3
     num_workers_dataloader: int=1
-    lr: float=1e-4
+    lr: float=2e-4
     weight_decay: float=0.0
     gamma: float= 0.85
     seed: int=42
@@ -22,7 +22,7 @@ class train_config:
     mixed_precision: bool=True
     val_batch_size: int=1
     dataset = "alpaca_dataset"
-    peft_method: str = "lora" # None , llama_adapter, prefix
+    peft_method: str = "lora" # None , llama_adapter, prefix, qlora
     use_peft: bool=False
     output_dir: str = "PATH/to/save/PEFT/model"
     freeze_layers: bool = False

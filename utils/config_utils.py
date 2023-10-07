@@ -41,13 +41,13 @@ def generate_peft_config(train_config, kwargs):
     peft_configs = (LoraConfig, AdaptionPromptConfig, PrefixTuningConfig)
     names = tuple(c.__name__.rstrip("_config") for c in configs)
     
-    assert train_config.peft_method in names, f"Peft config not found: {train_config.peft_method}"
+   # assert train_config.peft_method in names, f"Peft config not found: {train_config.peft_method}"
     
-    config = configs[names.index(train_config.peft_method)]()
+    config = lora_config()
     
     update_config(config, **kwargs)
     params = asdict(config)
-    peft_config = peft_configs[names.index(train_config.peft_method)](**params)
+    peft_config = LoraConfig(**params)
     
     return peft_config
 
