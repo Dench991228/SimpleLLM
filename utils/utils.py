@@ -15,4 +15,4 @@ class myProgressCallback(ProgressCallback):
             self.current_step = state.global_step
 
     def on_log(self, args, state, control, logs=None, **kwargs):
-        self.training_bar.set_description(f"Training Epoch: {logs['epoch']}, (loss: {logs['loss']})")
+        self.training_bar.set_description(f"Training Epoch: {int(logs['epoch'])}, (loss: {logs['loss']})")

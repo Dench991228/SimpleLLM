@@ -2,6 +2,7 @@
 import fire
 import torch
 import torch.optim as optim
+import transformers
 from torch.optim.lr_scheduler import StepLR, LinearLR
 from peft import prepare_model_for_kbit_training, get_peft_model
 from transformers import LlamaForCausalLM, LlamaTokenizer, BitsAndBytesConfig, TrainingArguments, Trainer
@@ -58,9 +59,9 @@ def main(**kwargs):
         evaluation_strategy="epoch",
         save_strategy="steps",
         save_steps=250,  # 500
-        per_device_train_batch_size=4,
+        per_device_train_batch_size=train_config.batch_size_training,
         disable_tqdm=True,
-        logging_steps=1
+        logging_steps=1,
     )
     dataset_config = generate_dataset_config(train_config, kwargs)
     optimizer = optim.AdamW(
@@ -77,7 +78,10 @@ def main(**kwargs):
         optimizers=(optimizer, scheduler),
     )
     trainer.add_callback(myProgressCallback)
-
+    callbacks = trainer.callback_handler.callbacks
+    for item in callbacks:
+        if isinstance(item, transformers.PrinterCallback):
+            trainer.remove_callback(item)
     trainer.train()
 
 
