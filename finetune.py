@@ -41,9 +41,10 @@ def main(**kwargs):
     )
 
     if train_config.peft_method == "lora":
-        model = AutoModelForCausalLM.from_pretrained(train_config.model_name)
-        peft_config = generate_peft_config(train_config, kwargs)
+        model = LlamaForCausalLM.from_pretrained(train_config.model_name, torch_dtype=torch.bfloat16)
         prepare_model_for_kbit_training(model)
+        peft_config = generate_peft_config(train_config, kwargs)
+        #prepare_model_for_kbit_training(model)
         #model.gradient_checkpointing_enable()
         peft_config.lora_alpha=16
         peft_config.r=64
@@ -86,6 +87,7 @@ def main(**kwargs):
         pin_memory=True,
         drop_last=True,
         collate_fn=default_data_collator,
+        shuffle=True
     )
     # Optimizer: Only tuning LoRA parameters
     optimizer = optim.AdamW(

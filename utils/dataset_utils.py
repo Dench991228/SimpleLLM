@@ -45,7 +45,7 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
     
 
 DATASET_PREPROC = {
-    "alpaca_dataset": partial(get_alpaca_dataset, max_words=224),
+    "alpaca_dataset": partial(get_alpaca_dataset, max_words=768),
     "custom_dataset": get_custom_dataset,
 }
 

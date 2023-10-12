@@ -1,4 +1,7 @@
 # 这个文件的主要内容就是对模型进行并行化的多卡精调
+import os
+import random
+
 import fire
 import torch
 import torch.optim as optim
@@ -47,21 +50,24 @@ def main(**kwargs):
     # prepare_model_for_int8_training(model)
     model = get_peft_model(model, peft_config)
     model.print_trainable_parameters()
-    model.to("cuda")
 
     # 训练参数
     training_args = TrainingArguments(
         output_dir="output",
         learning_rate=2e-4,
         num_train_epochs=1,  # 3
-        weight_decay=1,
+        weight_decay=train_config.weight_decay,
         do_eval=True,
-        evaluation_strategy="epoch",
+        evaluation_strategy="steps",
+        eval_steps=500,
         save_strategy="steps",
-        save_steps=250,  # 500
+        save_steps=100,  # 500
         per_device_train_batch_size=train_config.batch_size_training,
         disable_tqdm=True,
-        logging_steps=1,
+        logging_steps=100,
+        dataloader_drop_last=True,
+        save_total_limit=40
+        #deepspeed="./config/ds.json"
     )
     dataset_config = generate_dataset_config(train_config, kwargs)
     optimizer = optim.AdamW(
@@ -69,13 +75,13 @@ def main(**kwargs):
         lr=train_config.lr,
         weight_decay=train_config.weight_decay,
     )
-    scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
+    #scheduler = StepLR(optimizer, step_size=1, gamma=train_config.gamma)
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=get_preprocessed_dataset(tokenizer=tokenizer, split="train", dataset_config=dataset_config),
         eval_dataset=get_preprocessed_dataset(tokenizer=tokenizer, split="test", dataset_config=dataset_config),
-        optimizers=(optimizer, scheduler),
+        optimizers=[optimizer, None]
     )
     trainer.add_callback(myProgressCallback)
     callbacks = trainer.callback_handler.callbacks

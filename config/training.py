@@ -16,8 +16,8 @@ class train_config:
     num_workers_dataloader: int=1
     lr: float=2e-4
     weight_decay: float=0.0
-    gamma: float= 0.85
     seed: int=42
+    gamma: float = 0.85
     use_fp16: bool=False
     mixed_precision: bool=True
     val_batch_size: int=1
@@ -28,7 +28,6 @@ class train_config:
     freeze_layers: bool = False
     num_freeze_layers: int = 1
     quantization: bool = False
-    one_gpu: bool = True
     save_model: bool = True
     dist_checkpoint_root_folder: str="PATH/to/save/FSDP/model" # will be used if using FSDP
     dist_checkpoint_folder: str="fine-tuned" # will be used if using FSDP

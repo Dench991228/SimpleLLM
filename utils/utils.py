@@ -1,8 +1,14 @@
+import logging
+
 from tqdm import tqdm
 from transformers import ProgressCallback
 
 
 class myProgressCallback(ProgressCallback):
+    def __init__(self):
+        logging.basicConfig(filename="output/logfile", level=logging.INFO)
+        super().__init__()
+
 
     def on_train_begin(self, args, state, control, **kwargs):
         if state.is_local_process_zero:
@@ -15,4 +21,7 @@ class myProgressCallback(ProgressCallback):
             self.current_step = state.global_step
 
     def on_log(self, args, state, control, logs=None, **kwargs):
-        self.training_bar.set_description(f"Training Epoch: {int(logs['epoch'])}, (loss: {logs['loss']})")
+        if "loss" in logs.keys():
+            self.training_bar.set_description(f"Training Epoch: {int(logs['epoch'])}, (loss: {logs['loss']})")
+        logging.info(state)
+        logging.info(logs)
