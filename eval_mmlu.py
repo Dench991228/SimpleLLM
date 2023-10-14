@@ -7,6 +7,7 @@ import logging
 from tqdm import tqdm
 from optimum.bettertransformer import BetterTransformer
 from data.mmlu_dataset import mmlu_dataset
+from peft import PeftModel, PeftModelForCausalLM
 
 from utils.CustomizedLlama import CustomizedLlamaForCausalLM
 
@@ -27,16 +28,20 @@ quantization_config = BitsAndBytesConfig(
         llm_int8_threshold=6.0,
         llm_int8_has_fp16_weight=False
     )
-model = LlamaForCausalLM.from_pretrained(
+base_model = LlamaForCausalLM.from_pretrained(
     model_name,
-    load_in_4bit=True,
+    load_in_4bit=False,
     torch_dtype=torch.bfloat16,
     use_cache=False,
-    quantization_config=quantization_config
+)
+model = PeftModelForCausalLM.from_pretrained(
+    base_model,
+    "/data/hanzhi/output/checkpoint-4500",
+    torch_dtype=torch.bfloat16
 )
 #model = BetterTransformer.transform(model)
 model.eval()
-#model.to("cuda")
+model.to("cuda")
 generation_config = GenerationConfig(
     max_length=1024,
     max_new_tokens=1,
@@ -47,7 +52,10 @@ count_correct = 0
 count_total = 0
 logging.basicConfig(filename="logfile", level=logging.INFO)
 for i in tqdm(range(len(mmlu))):
-    generation_result = model.generate(tokenizer.encode(mmlu[i]['input'], return_tensors="pt").to(model.device), generation_config=generation_config)
+    generation_result = model.generate(
+        input_ids = tokenizer.encode(mmlu[i]['input'], return_tensors="pt").to(model.device),
+        generation_config=generation_config
+    )
     result = tokenizer.decode(generation_result[0])
     if result[-1] == mmlu[i]['answer']:
         count_correct += 1

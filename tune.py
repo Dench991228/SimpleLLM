@@ -53,7 +53,7 @@ def main(**kwargs):
 
     # 训练参数
     training_args = TrainingArguments(
-        output_dir="output",
+        output_dir="/data/hanzhi/output",
         learning_rate=2e-4,
         num_train_epochs=1,  # 3
         weight_decay=train_config.weight_decay,
@@ -81,14 +81,14 @@ def main(**kwargs):
         args=training_args,
         train_dataset=get_preprocessed_dataset(tokenizer=tokenizer, split="train", dataset_config=dataset_config),
         eval_dataset=get_preprocessed_dataset(tokenizer=tokenizer, split="test", dataset_config=dataset_config),
-        optimizers=[optimizer, None]
+        optimizers=[optimizer, None],
     )
     trainer.add_callback(myProgressCallback)
     callbacks = trainer.callback_handler.callbacks
     for item in callbacks:
         if isinstance(item, transformers.PrinterCallback):
             trainer.remove_callback(item)
-    trainer.train()
+    trainer.train(resume_from_checkpoint="/data/hanzhi/output/checkpoint-2400")
 
 
 if __name__ == "__main__":

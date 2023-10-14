@@ -6,7 +6,7 @@ from transformers import ProgressCallback
 
 class myProgressCallback(ProgressCallback):
     def __init__(self):
-        logging.basicConfig(filename="output/logfile", level=logging.INFO)
+        logging.basicConfig(filename="/data/hanzhi/output/logfile", level=logging.INFO)
         super().__init__()
 
 
@@ -25,3 +25,4 @@ class myProgressCallback(ProgressCallback):
             self.training_bar.set_description(f"Training Epoch: {int(logs['epoch'])}, (loss: {logs['loss']})")
         logging.info(state)
         logging.info(logs)
+        print(logs)
