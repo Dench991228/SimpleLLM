@@ -10,8 +10,6 @@ class train_config:
     enable_fsdp: bool=False
     low_cpu_fsdp: bool=False
     run_validation: bool=True
-    batch_size_training: int=16
-    gradient_accumulation_steps: int=1
     num_epochs: int=3
     num_workers_dataloader: int=1
     lr: float=2e-4
