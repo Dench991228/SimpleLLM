@@ -36,7 +36,7 @@ base_model = LlamaForCausalLM.from_pretrained(
 )
 model = PeftModelForCausalLM.from_pretrained(
     base_model,
-    "/data/hanzhi/output/checkpoint-4500",
+    "/data/hanzhi/output-lora/checkpoint-6500",
     torch_dtype=torch.bfloat16
 )
 #model = BetterTransformer.transform(model)

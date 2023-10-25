@@ -5,6 +5,7 @@ from torch import nn
 import torch.nn.functional as F
 from transformers import LlamaForCausalLM
 from peft import prepare_model_for_kbit_training
+from deepspeed import checkpointing
 
 
 
@@ -43,7 +44,7 @@ def myForward(module: nn.Module):
                 use_cache=use_cache,
             )
         else:
-            hidden_states, self_attn_weights, present_key_value = torch.utils.checkpoint.checkpoint(
+            hidden_states, self_attn_weights, present_key_value = checkpointing.checkpoint(
                 customize_self_attn,
                 hidden_states,
                 attention_mask,
@@ -61,10 +62,10 @@ def myForward(module: nn.Module):
             hidden_states = module.mlp(hidden_states)
         else:
             hidden_states = module.mlp(hidden_states)
-            #hidden_states = torch.utils.checkpoint.checkpoint(
-                #customize_mlp,
-                #hidden_states
-            #)
+            hidden_states = checkpointing.checkpoint(
+                customize_mlp,
+                hidden_states
+            )
         hidden_states = residual + hidden_states
 
         outputs = (hidden_states,)
@@ -85,10 +86,3 @@ class CustomizedLlamaForCausalLM(LlamaForCausalLM):
         for item in self.model.layers:
             # 把各个DecoderLayer里面，只Gradient Checkpoint自注意力机制的部分，不对MLP的部分做Recomputation
             item.forward=myForward(item)
-        if hasattr(self, "enable_input_require_grads"):
-            self.enable_input_require_grads()
-        else:
-            def make_inputs_require_grad(module, input, output):
-                output.requires_grad_(True)
-
-            self.get_input_embeddings().register_forward_hook(make_inputs_require_grad)

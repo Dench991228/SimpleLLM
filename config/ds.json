@@ -1,38 +1,35 @@
 {
-    "gradient_accumulation_steps": "auto",
-    "gradient_clipping": "auto",
-    "steps_per_print": 200,
-    "train_batch_size": "auto",
-    "train_micro_batch_size_per_gpu": "auto",
-    "wall_clock_breakdown": false,
-
-    "optimizer": {
-          "type": "AdamW",
-          "params": {
-              "lr": "auto",
-              "betas": "auto",
-              "eps": "auto",
-              "weight_decay": "auto"
-          }
-    },
-    "zero_optimization": {
-        "stage": 3,
+  "train_batch_size": 4,
+  "gradient_accumulation_steps": 4,
+  "wall_clock_breakdown": false,
+  "gradient_clipping": 1.0,
+  "steps_per_print": 100,
+  "amp": {
+    "enabled": false,
+    "opt_level": "O2"
+  },
+  "bfloat16": {
+    "enabled": true
+  },
+ "zero_optimization": {
+        "stage": 2,
         "overlap_comm": true,
+        "reduce_scatter": true,
+        "reduce_bucket_size": 1e8,
         "contiguous_gradients": true,
-        "sub_group_size": 1e9,
-        "reduce_bucket_size": "auto",
+        "sub_group_size": "auto",
         "stage3_prefetch_bucket_size": "auto",
         "stage3_param_persistence_threshold": "auto",
         "stage3_max_live_parameters": 1e9,
         "stage3_max_reuse_distance": 1e9,
         "stage3_gather_16bit_weights_on_model_save": true
-    },
-    "scheduler": {
-        "type": "WarmupLR",
-        "params": {
-            "warmup_min_lr": "auto",
-            "warmup_max_lr": "auto",
-            "warmup_num_steps": "auto"
-        }
-    }
+ },
+  "data_efficiency": {
+    "enabled": true,
+    "seed": 42
+  },
+  "data_sampling": {
+    "enabled": true,
+    "num_workers": 8
+  }
 }
